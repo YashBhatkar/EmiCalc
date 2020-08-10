@@ -3,7 +3,7 @@ import HomeLoan from './HomeLoan'
 
 function Body() {
     return (
-        <div style={{ marginLeft:'30em', marginRight:'30em',marginTop: '2em'}}>
+        <div style={{ marginLeft:'25em', marginRight:'25em',marginTop: '2em',backgroundColor:'white'}}>
             <HomeLoan/>
         </div>
     )

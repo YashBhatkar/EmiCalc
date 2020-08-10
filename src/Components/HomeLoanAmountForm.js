@@ -1,24 +1,13 @@
-import React, { Component } from 'react'
-import Symbol from './Symbol'
-import './HomeLoanAmountForm.css'
-import PropTypes from 'prop-types';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import clsx from 'clsx';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import FilledInput from '@material-ui/core/FilledInput';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
 import { teal } from '@material-ui/core/colors';
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import Slider from '@material-ui/core/Slider';
+import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles';
+import React from 'react';
 import store from '../store';
+import './HomeLoanAmountForm.css';
+import Commas from './Commas';
+import RemoveCommas from './RemoveCommas';
 
 
 
@@ -134,11 +123,29 @@ class HomeLoanAmountForm extends React.Component {
       }
   
     handleInputChange(event) {
-     this.setState({value: event.target.value});
+     let noComma=RemoveCommas(event.target.value)
+     if(isNaN(noComma)){
+       return
+     }
+     noComma= noComma.replace(/ /g,'')
+     noComma= noComma.replace(/,/g,'')
+     noComma= noComma.replace(/\./g,'')
+     if(noComma===''){
+       noComma=0
+     }
+     if(noComma.length===2){
+       if(noComma.charAt(0)==0){
+         noComma=noComma.charAt(1)
+       }
+     }
+     if(noComma>1000000000){
+       noComma=1000000000
+     }
+     this.setState({value: noComma});
       store.dispatch({
         type:"homeLoanAmount",
         payload:{
-          homeLoanAmount: event.target.value
+          homeLoanAmount: noComma
         }
       });
     }
@@ -163,7 +170,7 @@ class HomeLoanAmountForm extends React.Component {
           </label>
           <ThemeProvider theme={theme}>
           <OutlinedInput
-            value={store.getState().homeLoanAmount}
+            value={Commas(store.getState().homeLoanAmount)}
             onChange={this.handleInputChange}
             endAdornment={<InputAdornment position="end">INR</InputAdornment>}
               labelWidth={0}

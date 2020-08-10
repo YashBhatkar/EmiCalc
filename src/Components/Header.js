@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
-import { Navbar, NavItem, NavDropdown, MenuItem, Nav } from 'react-bootstrap';
-import Symbol from './Symbol'
-import './Header.css'
+import React, { Component } from 'react';
+import { Nav, Navbar } from 'react-bootstrap';
+import './Header.css';
+import Symbol from './Symbol';
 
 export class Header extends Component {
     render() {

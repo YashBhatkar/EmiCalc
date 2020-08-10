@@ -1,20 +1,36 @@
-import React from 'react'
-import store from '../store.js'
-import {Axios} from 'axios'
+import store from '../store.js';
 
-const axios = require('axios').default;
+//const axios = require('axios').default;
 
 function Calculator() {
-    /* const homeLoanAmount= (store.getState().homeLoanAmount)
+    const moratorium=(store.getState().moratorium)
+    const gracePeriod=(store.getState().gracePeriod)
+    const homeLoanAmount= (store.getState().homeLoanAmount)
+    //console.log(gracePeriod)
 
    const interestRate= (store.getState().homeInterestRate)/(1200);
-   const loanTenure= (store.getState().homeLoanTenure);
+   let loanTenure= (store.getState().homeLoanTenure)-gracePeriod;
+   if(loanTenure==0){
+     loanTenure=1
+   }
 
 
-    const emiValue=(homeLoanAmount*interestRate*(Math.pow((1+interestRate),loanTenure)))/((Math.pow((1+interestRate),loanTenure))-1);
-    console.log(emiValue) */
+    let emiValue=(homeLoanAmount*interestRate*(Math.pow((1+interestRate),loanTenure)))/((Math.pow((1+interestRate),loanTenure))-1);
 
-    axios({
+    
+
+    if(interestRate==0){
+      emiValue=homeLoanAmount/loanTenure
+    }
+
+   
+    /* if(loanTenure==0){
+      emiValue=homeLoanAmount
+    } */
+    return emiValue
+    
+
+    /* axios({
         method: 'get',
         url: 'http://localhost:3200/',
         data: {
@@ -31,7 +47,7 @@ function Calculator() {
     })
     return (
   <div/>
-    )
+    ) */
 }
 
 export default Calculator

@@ -1,24 +1,12 @@
-import React, { Component } from 'react'
-import Symbol from './Symbol'
-import './InterestRateForm.css'
-import PropTypes from 'prop-types';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import clsx from 'clsx';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import FilledInput from '@material-ui/core/FilledInput';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
 import { teal } from '@material-ui/core/colors';
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-import store from '../store.js'
+import InputAdornment from '@material-ui/core/InputAdornment';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import Slider from '@material-ui/core/Slider';
+import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles';
+import React from 'react';
+import store from '../store.js';
+import './InterestRateForm.css';
+import DecimalCheck from './DecimalCheck.js';
 
 const InterestRateMarks = [
         {
@@ -126,11 +114,42 @@ class InterestRateForm extends React.Component {
       }
   
     handleInputChange(event) {
-      this.setState({value: event.target.value});
+      let answer= event.target.value
+      if(isNaN(answer)){
+        return
+      }
+      answer= answer.replace(/ /g,'')
+      answer= answer.replace(/,/g,'')
+      //answer= answer.replace(/./g,'')
+      //console.log(answer)
+      /* if(answer=='.'){
+        answer=''
+        console.log("lol")
+      } */
+      answer=DecimalCheck(answer)
+      if(answer===''){
+        answer=0
+      }
+      /* if(answer<1){
+        answer=1
+      } */
+      if(answer>25){
+        answer=25
+      }
+      if(answer.length===2){
+        if(answer.charAt(0)==0){
+          if(answer.charAt(1)!="."){
+          answer=answer.charAt(1)
+          }
+        }
+      }
+  
+
+      this.setState({value: answer});
       store.dispatch({
         type:"homeInterestRate",
         payload:{
-          homeInterestRate: event.target.value
+          homeInterestRate: answer
         }
       });
     }

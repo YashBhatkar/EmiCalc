@@ -6,38 +6,8 @@ import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/sty
 import React from 'react';
 import store from '../store.js';
 import './LoanTenureForm.css';
+import { connect } from 'react-redux'
 
-const LoanTenureMarks = [
-  {
-    value: 0,
-    label: '0',
-  },
-  {
-    value: 60,
-    label: '60',
-  },
-  {
-    value: 120,
-    label: '120',
-  },
-  {
-    value: 180,
-    label: '180',
-  },
-  {
-    value: 240,
-    label: '240',
-  },
-  {
-    value: 300,
-    label: '300',
-  },
-  {
-    value: 360,
-    label: '360',
-  },
- 
-];
 
 const theme = createMuiTheme({
     palette: {
@@ -96,20 +66,20 @@ const PrettySlider = withStyles({
   })(Slider);
 
   
-class LoanTenureForm extends React.Component {
+class Moratorium extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {value: '60'};
+      this.state = {value: '0'};
 
       store.dispatch({
-        type:"homeLoanTenure",
+        type:"moratorium",
         payload:{
-          homeLoanTenure: this.state.value
+          moratorium: this.state.value
         }
       });
   
       this.handleInputChange = this.handleInputChange.bind(this);
-      this.handleSliderChange = this.handleSliderChange.bind(this);
+     
       }
   
     handleInputChange(event) {
@@ -131,8 +101,10 @@ class LoanTenureForm extends React.Component {
       /* if(answer<1){
         answer=1
       } */
-      if(answer>360){
-        answer=360
+     
+      if(answer>=parseInt(store.getState().homeLoanTenure)){
+        answer=store.getState().homeLoanTenure-1
+        //console.log(store.getState().homeLoanTenure)
       }
       if(answer.length==2){
         if(answer.charAt(0)==0){
@@ -143,42 +115,13 @@ class LoanTenureForm extends React.Component {
 
       this.setState({value: answer});
       store.dispatch({
-        type:"homeLoanTenure",
+        type:"moratorium",
         payload:{
-          homeLoanTenure: answer
+          moratorium: answer
         }
       });
-      if(store.getState().homeLoanTenure<=store.getState().moratorium){
-        if(store.getState().homeLoanTenure==0){
-          const value=0
-          store.dispatch({
-            type:"moratorium",
-            payload:{
-              moratorium: value
-            }
-          });
-          
-        }
-        else{
-          const value=store.getState().homeLoanTenure-1
-          store.dispatch({
-            type:"moratorium",
-            payload:{
-              moratorium: value
-            }
-          });
-        }
-      }
     }
-    handleSliderChange(event, newValue){
-        this.setState({value: newValue})
-        store.dispatch({
-          type:"homeLoanTenure",
-          payload:{
-            homeLoanTenure: newValue
-          }
-        });
-    }
+
     numberToText(value){
       
     }
@@ -187,11 +130,11 @@ class LoanTenureForm extends React.Component {
         <React.Fragment>
         <form>
           <label  style={{ paddingRight:'5em'}}>
-            Loan Tenure
+            Moratorium
           </label>
           <ThemeProvider theme={theme}>
           <OutlinedInput
-            value={store.getState().homeLoanTenure}
+            value={store.getState().moratorium}
             onChange={this.handleInputChange}
             endAdornment={<InputAdornment position="end">Months</InputAdornment>}
               labelWidth={0}
@@ -199,19 +142,18 @@ class LoanTenureForm extends React.Component {
           />
            </ThemeProvider>
         </form>
-        <PrettySlider 
-        value={store.getState().homeLoanTenure}
-        onChange={this.handleSliderChange}
-        disabled={false}
-        max={360}
-        min={0}
-        step={1}
-        marks={LoanTenureMarks}
-  
-      />
+    
        </React.Fragment>
       );
     }
   }
 
-  export default LoanTenureForm
+  const mapStateToProps = state => {
+    return{
+
+        homeLoanTenure: state.homeLoanTenure
+
+
+    }
+}
+export default connect(mapStateToProps)(Moratorium);    
