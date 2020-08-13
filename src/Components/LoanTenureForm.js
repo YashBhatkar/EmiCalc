@@ -6,6 +6,7 @@ import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/sty
 import React from 'react';
 import store from '../store.js';
 import './LoanTenureForm.css';
+import { connect } from 'react-redux'
 
 const LoanTenureMarks = [
   {
@@ -134,6 +135,20 @@ class LoanTenureForm extends React.Component {
       if(answer>360){
         answer=360
       }
+      if(answer<= parseInt(store.getState().moratorium)+parseInt(store.getState().gracePeriod)){
+        store.dispatch({
+          type:"moratorium",
+          payload:{
+            moratorium: 0
+          }
+        });
+        store.dispatch({
+          type:"gracePeriod",
+          payload:{
+            gracePeriod: 0
+          }
+        });
+      }
       if(answer.length==2){
         if(answer.charAt(0)==0){
           answer=answer.charAt(1)
@@ -171,6 +186,23 @@ class LoanTenureForm extends React.Component {
       }
     }
     handleSliderChange(event, newValue){
+      store.dispatch({
+        type:"moratorium",
+        payload:{
+          moratorium: 0
+        }
+      });
+      store.dispatch({
+        type:"gracePeriod",
+        payload:{
+          gracePeriod: 0
+        }
+      });
+    
+
+     /*  if(newValue<= parseInt(store.getState().moratorium)+parseInt(store.getState().gracePeriod)){
+        newValue=parseInt(store.getState().moratorium)+parseInt(store.getState().gracePeriod)+1
+      } */
         this.setState({value: newValue})
         store.dispatch({
           type:"homeLoanTenure",
@@ -213,5 +245,13 @@ class LoanTenureForm extends React.Component {
       );
     }
   }
+  const mapStateToProps = state => {
+    return{
 
-  export default LoanTenureForm
+        moratorium: state.moratorium,
+        gracePeriod: state.gracePeriod
+
+
+    }
+}
+export default connect(mapStateToProps)(LoanTenureForm);    

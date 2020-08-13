@@ -10,10 +10,10 @@ function Commas(string) {
     else{
         tracker=tracker-3
       string= insert(string,(tracker))
-        tracker=tracker-2
+        tracker=tracker-3
       while(tracker>0){
         string= insert(string,(tracker))
-        tracker=tracker-2
+        tracker=tracker-3
 
       }
       

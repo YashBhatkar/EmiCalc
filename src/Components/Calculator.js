@@ -16,6 +16,7 @@ function Calculator() {
 
 
     let emiValue=(homeLoanAmount*interestRate*(Math.pow((1+interestRate),loanTenure)))/((Math.pow((1+interestRate),loanTenure))-1);
+    emiValue= (emiValue*(loanTenure)/(loanTenure-moratorium))
 
     
 

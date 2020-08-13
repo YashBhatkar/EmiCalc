@@ -7,6 +7,7 @@ import React from 'react';
 import store from '../store.js';
 import './LoanTenureForm.css';
 import { connect } from 'react-redux'
+import GracePeriod from './GracePeriod.js';
 
 
 const theme = createMuiTheme({
@@ -102,8 +103,11 @@ class Moratorium extends React.Component {
         answer=1
       } */
      
-      if(answer>=parseInt(store.getState().homeLoanTenure)){
-        answer=store.getState().homeLoanTenure-1
+      if(answer>=parseInt(store.getState().homeLoanTenure)-parseInt(store.getState().gracePeriod)){
+        answer=(store.getState().homeLoanTenure)-parseInt(store.getState().gracePeriod)-1
+        if(answer<0){
+          answer=0
+        }
         //console.log(store.getState().homeLoanTenure)
       }
       if(answer.length==2){
@@ -151,7 +155,8 @@ class Moratorium extends React.Component {
   const mapStateToProps = state => {
     return{
 
-        homeLoanTenure: state.homeLoanTenure
+        homeLoanTenure: state.homeLoanTenure,
+        gracePeriod: state.gracePeriod
 
 
     }

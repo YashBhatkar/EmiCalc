@@ -4,17 +4,19 @@ import Calculator from './Calculator.js'
 import Commas from './Commas.js'
 import GracePeriod from './GracePeriod.js'
 
+//Calculates and Displays the Total Payable Amount with interest and principle breakdown
 class Answer extends Component {
     render() {
         let numMonths=this.props.homeLoanTenure
         let principle= Math.round(parseFloat(Calculator()))+""
-        let interest=Math.round(parseFloat(((this.props.homeLoanTenure-this.props.gracePeriod)*Calculator())-this.props.homeLoanAmount))+""
-        let total=Math.round(parseFloat(((this.props.homeLoanTenure-this.props.gracePeriod)*Calculator())))+""
+        let interest=Math.round(parseFloat(((this.props.homeLoanTenure-this.props.gracePeriod-this.props.moratorium)*Calculator())-this.props.homeLoanAmount))+""
+        let total=Math.round(parseFloat(((this.props.homeLoanTenure-this.props.gracePeriod-this.props.moratorium)*Calculator())))+""
         if(this.props.homeLoanTenure==0){
             principle= this.props.homeLoanAmount
             interest=0
             total=this.props.homeLoanAmount
         }
+
         principle=Commas(principle)
         interest=Commas(interest)
         total=Commas(total)
@@ -24,15 +26,15 @@ class Answer extends Component {
             <div className='rowH' style={{backgroundColor: 'white'}}>
                 <div style={{marginRight:'3em'}}>
                 <h2 style={{color:'teal', fontSize:'22px'}}>Loan EMI</h2>
-                <h2 style={{color:'teal', fontSize:'22px'}}>₹ {principle}</h2>
+                <h2 style={{color:'teal', fontSize:'22px'}}>$ {principle}</h2>
                 </div>
                 <div style={{marginRight:'3em'}}>
                 <h2 style={{color:'teal', fontSize:'22px'}}>Total Interest Payable</h2>
-                <h2 style={{color:'teal', fontSize:'22px'}}>₹ {interest}</h2>
+                <h2 style={{color:'teal', fontSize:'22px'}}>$ {interest}</h2>
                 </div>
                 <div>
                 <h2 style={{color:'teal', fontSize:'22px'}}>Total Payment</h2>
-                <h2 style={{color:'teal', fontSize:'22px '}}>₹ {total}</h2>
+                <h2 style={{color:'teal', fontSize:'22px '}}>$ {total}</h2>
                 </div>
                 </div>
 

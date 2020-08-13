@@ -172,7 +172,7 @@ class HomeLoanAmountForm extends React.Component {
           <OutlinedInput
             value={Commas(store.getState().homeLoanAmount)}
             onChange={this.handleInputChange}
-            endAdornment={<InputAdornment position="end">INR</InputAdornment>}
+            endAdornment={<InputAdornment position="end">USD</InputAdornment>}
               labelWidth={0}
               style = {{width: 200}}
           />

@@ -17,8 +17,10 @@ import React from 'react';
 //import { Icon } from '@material-ui/core';
 import { connect } from 'react-redux';
 import Calculator from './Calculator';
-import Commas from './Commas';
 import Moratorium from './Moratorium';
+import  CreateData  from './CreateData';
+import CreateDataMonth  from './CreateDataMonth';
+
 
 const useRowStyles = makeStyles({
   root: {
@@ -28,72 +30,6 @@ const useRowStyles = makeStyles({
   },
 });
 
-function createData(year, principle, interest, totalPayment, balance, loanPaidToDate, months) {
-  principle=Commas(Math.round(principle))
-  interest=Commas(Math.round(interest))
-  totalPayment=Commas(Math.round(totalPayment))
-  balance=Commas(Math.round(balance))
-  loanPaidToDate=(Math.round(loanPaidToDate*10))/10
-  if(months===undefined){
-    months=[]
-  }
-  loanPaidToDate= loanPaidToDate+"%"
-  return {
-    year, principle, interest, totalPayment, balance, loanPaidToDate,
-    months
-  };
-}
-
-function createDataMonth(month, principle, interest, totalPayment, balance, loanPaidToDate) {
-  principle=Commas(Math.round(principle))
-  interest=Commas(Math.round(interest))
-  totalPayment=Commas(Math.round(totalPayment))
-  balance=Commas(Math.round(balance))
-  loanPaidToDate=(Math.round(loanPaidToDate*10))/10
-
-if(month===0){
-  month="January"
-}
-if(month===1){
-  month="February"
-}if(month===2){
-  month="March"
-}if(month===3){
-  month="April"
-}if(month===4){
-  month="May"
-}if(month===5){
-  month="June"
-}if(month===6){
-  month="July"
-}if(month===7){
-  month="August"
-}if(month===8){
-  month="September"
-}if(month===9){
-  month="October"
-}
-if(month===10){
-  month="November"
-}
-if(month===11){
-  month="December"
-}
-loanPaidToDate= loanPaidToDate+"%"
-  let temp={
-    month: month,
-    principle: principle,
-    interest: interest,
-    totalPayment: totalPayment,
-    balance: balance,
-    loanPaidToDate: loanPaidToDate
-
-
-  }
-  
-  
-  return temp
-}
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
@@ -187,12 +123,28 @@ if(numMonth==0){
 let tracker=0;
 const rows=[]
 let balance=parseFloat(props.homeLoanAmount)
+let graceMonths= parseInt(props.gracePeriod)
+const moratoriumMonths=parseInt(props.moratorium)
 const numYear= Math.ceil((props.homeLoanTenure-(12-currMonth))/12)+1
 let principle=parseFloat(props.homeLoanAmount)
 const emi=Calculator()
-const interestMonth=parseFloat(props.homeInterestRate)/1200
+let interestMonth=(parseFloat(props.homeInterestRate)/1200)
+//let adjustedPrinciple=parseFloat(props.homeLoanAmount)+
+ if(props.moratorium!=0){
+  //let prevInterest=interestMonth
+   //interestMonth=(parseFloat(props.homeInterestRate)/1200)*(props.homeLoanTenure/(props.homeLoanTenure-props.moratorium))
+  
+  interestMonth=parseFloat(interestMonth)
+  for(let i=0;i<100;i++){
+    //interestMonth=interestMonth*((((Math.pow((1+interestMonth),(props.homeLoanTenure-graceMonths-moratoriumMonths)))-1)/((Math.pow((1+interestMonth),(props.homeLoanTenure-graceMonths-moratoriumMonths)))))/(((Math.pow((1+prevInterest),(props.homeLoanTenure-graceMonths-moratoriumMonths)))-1)/((Math.pow((1+prevInterest),(props.homeLoanTenure-graceMonths-moratoriumMonths))))))
+   // console.log(((Math.pow((1+interestMonth),(props.homeLoanTenure-graceMonths-moratoriumMonths)))-1)+"     "+((Math.pow((1+interestMonth),(props.homeLoanTenure-graceMonths-moratoriumMonths)))))
+    interestMonth=((Calculator()/principle)*((((Math.pow((1+interestMonth),(props.homeLoanTenure-graceMonths-moratoriumMonths)))-1)/((Math.pow((1+interestMonth),(props.homeLoanTenure-graceMonths-moratoriumMonths)))))))
+  }
+
+} 
+
 let principleLeft=parseFloat(props.homeLoanAmount)
-let graceMonths= props.gracePeriod
+
 let i=0
 let monthTrack=0;
 let monthCheck=currMonth
@@ -201,22 +153,16 @@ let index=0
 
 
 
+while(i<(graceMonths)+(moratoriumMonths)){
 
-
-
-
-
-
-
-while(i<graceMonths){
-  months[index]=createDataMonth((monthCheck),0,0,0,0,0)
+  months[index]=CreateDataMonth((monthCheck),0,0,0,balance,0)
   //console.log(yearBalance)
   monthCheck++
   index++
   if((monthCheck)%12==0&&monthCheck!=0){
     //console.log(yearBalance+"   "+yearBalance%11)
     monthCheck=0
-    rows[tracker+1]=createData(currYear+tracker,0,0,0,0,0, months)
+    rows[tracker+1]=CreateData(currYear+tracker,0,0,0,balance,0, months)
     tracker++
     index=0
     months=[]
@@ -224,17 +170,16 @@ while(i<graceMonths){
   }
 
 i++
+//console.log(i)
 }
+//console.log(monthCheck+" "+index)
 
 
+if(props.homeLoanTenure-graceMonths-moratoriumMonths-(12-currMonth)>0){
 
-if(props.homeLoanTenure-graceMonths-(12-currMonth)>0){
-
-let month1=[]
 
 
 //let principleLeft=parseFloat(props.homeLoanAmount)
-let monthTrack=0;
 
 let totalPrinciple=0;
 let totalInterest=0;
@@ -242,26 +187,27 @@ let totalEmi=0
 
 
 for(let i=monthCheck; i<12;i++){
-  let currInterest=interestMonth*principleLeft
-  let currPrinciple=emi-currInterest
-  principleLeft= principleLeft-currPrinciple
-  balance=balance-currPrinciple
+  let currInterest=interestMonth*principleLeft;
+  let currPrinciple=emi-currInterest;
+  principleLeft= principleLeft-currPrinciple;
+  balance=balance-currPrinciple;
   let loanPaid= (1-(balance/principle))*100
   totalPrinciple=totalPrinciple+currPrinciple;
-  totalInterest=totalInterest+currInterest
+  totalInterest=totalInterest+currInterest;
   totalEmi=totalEmi+emi;
-  month1[monthTrack]=createDataMonth(i,currPrinciple,currInterest,emi,balance,loanPaid)
+  months[monthCheck]=CreateDataMonth(i,currPrinciple,currInterest,emi,balance,loanPaid);
+  monthCheck++;
   monthTrack++;
 
 }
 let loanPaid= (1-(balance/principle))*100
-rows[1+tracker]=createData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid, month1)
+rows[1+tracker]=CreateData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid, months)
+months=[]
 tracker++
 }
 else{
   oneYear=true
   const numYear=1;
-  let month1=[]
 
 
 //let principleLeft=parseFloat(props.homeLoanAmount)
@@ -269,7 +215,7 @@ let monthTrack=0;
 let totalPrinciple=0;
 let totalInterest=0;
 let totalEmi=0
-for(let i=0; i<numMonth-graceMonths;i++){
+for(let i=0; i<numMonth-graceMonths-moratoriumMonths;i++){
   let currInterest=interestMonth*principleLeft
   let currPrinciple=emi-currInterest
   principleLeft= principleLeft-currPrinciple
@@ -278,18 +224,19 @@ for(let i=0; i<numMonth-graceMonths;i++){
   totalPrinciple=totalPrinciple+currPrinciple;
   totalInterest=totalInterest+currInterest
   totalEmi=totalEmi+emi;
-  month1[i+currMonth]=createDataMonth(i+currMonth,currPrinciple,currInterest,emi,balance,loanPaid)
+  months[i+currMonth]=CreateDataMonth(i+currMonth,currPrinciple,currInterest,emi,balance,loanPaid)
   monthTrack++;
 
 }
 let loanPaid= (1-(balance/principle))*100
-rows[1+tracker]=createData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid,month1)
+rows[1+tracker]=CreateData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid,months)
+months=[]
 tracker++
 }
 
 while(tracker<numYear-1){
 
-  let month=[]
+
 
 
 //let principleLeft=parseFloat(props.homeLoanAmount)
@@ -306,16 +253,17 @@ for(let i=0; i<12;i++){
   totalPrinciple=totalPrinciple+currPrinciple;
   totalInterest=totalInterest+currInterest
   totalEmi=totalEmi+emi;
-  month[i]=createDataMonth(i,currPrinciple,currInterest,emi,balance,loanPaid)
+  months[i]=CreateDataMonth(i,currPrinciple,currInterest,emi,balance,loanPaid)
 
 }
 let loanPaid= (1-(balance/principle))*100
-rows[tracker+1]=createData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid,month)
+rows[tracker+1]=CreateData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid,months)
+months=[]
 tracker++
 
 }
 
-let month=[]
+
 
 
 //let principleLeft = parseFloat(props.homeLoanAmount)
@@ -336,12 +284,13 @@ for(let i=0; i<whatleft;i++){
   totalPrinciple=totalPrinciple+currPrinciple;
   totalInterest=totalInterest+currInterest
   totalEmi=totalEmi+emi;
-  month[i]=createDataMonth(i,currPrinciple,currInterest,emi,balance,loanPaid)
+  months[i]=CreateDataMonth(i,currPrinciple,currInterest,emi,balance,loanPaid)
 
 }
 if(whatleft!==0){
 let loanPaid= (1-(balance/principle))*100
-rows[tracker+1]=createData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid,month)
+rows[tracker+1]=CreateData(currYear+tracker,totalPrinciple,totalInterest,totalEmi,balance,loanPaid,months)
+months=[]
 }
 
 
@@ -363,11 +312,11 @@ rows[tracker+1]=createData(currYear+tracker,totalPrinciple,totalInterest,totalEm
           <TableRow>
             <TableCell />
             <TableCell>Year</TableCell>
-            <TableCell align="right">Principle&nbsp;(₹)</TableCell>
-            <TableCell align="right">Interest&nbsp;(₹)</TableCell>
-            <TableCell align="right">Total Payment&nbsp;(₹)</TableCell>
-            <TableCell align="right">Balance&nbsp;(₹)</TableCell>
-            <TableCell align="right">Loan Paid To Date&nbsp;(₹)</TableCell>
+            <TableCell align="right">Principle&nbsp;($)</TableCell>
+            <TableCell align="right">Interest&nbsp;($)</TableCell>
+            <TableCell align="right">Total Payment&nbsp;($)</TableCell>
+            <TableCell align="right">Balance&nbsp;($)</TableCell>
+            <TableCell align="right">Loan Paid To Date&nbsp;($)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
