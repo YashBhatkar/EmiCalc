@@ -1,16 +1,27 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Overview
+A web application for calculating and graphically represnting EMI. It features a **pie-chart** to visualize the distrubution of interest payable and principle. It also includes a **collapsable table** showing the breakdown and progress of the loan every month. Unlike most other Emi Calculator it has the ability to include **moratorium period** and **grace period**, to see their month by moth effect on the loan.
 
-## Available Scripts
 
-In the project directory, you can run:
+# Installation
+### Step 1
+If NodeJS is not installed, install it using the following link: https://nodejs.org/en/download/
 
-### `npm start`
+### Step 2
+Navigate to EMI using Terminal or Command Prompt
+ 
+### Step 3
+Type 'npm install' and run the command
 
-Runs the app in the development mode.<br />
+### Step 4
+Type 'npm start' and run the command
+
+This will run the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
+
+# More commands
 
 ### `npm test`
 
@@ -66,3 +77,4 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
